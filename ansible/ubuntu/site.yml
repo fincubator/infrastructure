@@ -1,9 +1,9 @@
-# playbook for install booker
+---
 
-- name: test
-  host: booker_hosts
+- name: Install booker
+  hosts: '{{ target }}'
   gather_facts: false
-  
+
   tasks:
   - name: Install git with depends
     apt:
@@ -11,52 +11,28 @@
       state: present
       update_cache: yes
 
-  - name: Remove old docker packages
-    apt:
-      name: "{{ item }}"
-      state: absent
-      update_cache: yes
-    with_items:
-      - docker
-      - docker-client
-      - docker-client-latest
-      - docker-common
-      - docker-latest
-      - docker-latest-logrotate
-      - docker-logrotate
-      - docker-engine
-    tags:
-      - docker
-
   - name: Install docker depends
     apt:
-      name: "{{ item }}"
+      name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg-agent', 'software-properties-common']
       state: present
       update_cache: yes
-    with_items:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gnupg-agent
-      - software-properties-common
     tags:
       - docker
 
-      
   - name: Add Docker s official GPG key
     apt_key:
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
     tags:
       - docker
-      
+
   - name: Verify that we have the key with the fingerprint
     apt_key:
       id: 0EBFCD88
       state: present
     tags:
       - docker
-      
+
   - name: Set up the stable repository
     apt_repository:
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
@@ -64,24 +40,13 @@
       update_cache: yes
     tags:
       - docker
-      
-  - name: Update apt packages
-    apt:
-      update_cache: yes
-    tags:
-      - docker
-      
+
   - name: Install docker
     remote_user: ubuntu
     apt:
-      name: "{{ item }}"
+      name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
       state: present
       update_cache: yes
-    with-items:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    #notify: Start docker on boot
     tags:
       - docker
 
@@ -90,14 +55,14 @@
       state: started
       name: docker
 
-  - name: enable service httpd and ensure it is not masked
+  - name: Enable docker service and ensure it is not masked
     systemd:
       name: docker
       enabled: yes
       masked: no
 
   - name: Install docker-compose
-    get_url: 
+    get_url:
       url : https://github.com/docker/compose/releases/download/1.26.2/docker-compose-Linux-x86_64
       dest: /usr/local/bin/docker-compose
       mode: 'u+x,g+x'
@@ -108,11 +73,28 @@
       state: directory
       recurse: yes
 
-# ToDo: add ssh keys to repo
+  - name: Creates ssh directory for root
+    file:
+      path: /root/.ssh
+      state: directory
+
+  - name: Upload the private key used for Github cloning
+    copy:
+      src: keys/github_booker
+      dest: /root/.ssh/github_booker
+
+  - name: Correct SSH deploy key permissions
+    file:
+       dest: /root/.ssh/github_booker
+       mode: '0600'
+
   - name: Clone booker repo
     git:
       repo: git@github.com:fincubator/booker.git
       dest: /opt/booker
+      key_file: /root/.ssh/github_booker
+      accept_hostkey: yes
+      force: yes
 
   - name: Run docker containers
     shell: "cd /opt/booker/docker && docker-compose up -d"
