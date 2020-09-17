@@ -42,7 +42,6 @@
       - docker
 
   - name: Install docker
-    remote_user: ubuntu
     apt:
       name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
       state: present

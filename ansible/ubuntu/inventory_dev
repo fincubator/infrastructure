@@ -13,3 +13,6 @@ host1.example.com
 [db_hosts]
 host3.example.com
 host1.example.com
+
+[db_hosts:vars]
+ansible_python_interpreter=/usr/bin/python3

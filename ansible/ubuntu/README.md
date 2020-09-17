@@ -6,10 +6,18 @@ Deploy gateway and booker services.
 ### Linux (Ubuntu 18.04)
 
 ##### Requirements on management server
-* [Ansible]
+* Ansible
 
 ##### Requirements on service server
-* [Git]
-* [Docker]
-* [Docker Compose]
+* Git
+* Docker
+* Docker Compose
+
+Check that python3 installed:
+python -V
+python3 -V
+
+
+ansible-playbook common.yml --extra-vars "target=all" -i inventory_dev
+
 
