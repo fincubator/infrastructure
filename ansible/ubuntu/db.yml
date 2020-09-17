@@ -30,3 +30,4 @@
       ZMQ_PORT: "8081"
       ZMQ_HOST: "0.0.0.0"
       HTTP_PORT_HOST: "8080"
+      
