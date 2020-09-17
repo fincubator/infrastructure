@@ -1,0 +1,69 @@
+---
+
+- name: Install common software
+  hosts: '{{ target }}'
+  gather_facts: false
+
+  tasks:
+  - name: Install git with depends
+    apt:
+      name: "git"
+      state: present
+      update_cache: yes
+
+  - name: Install docker depends
+    apt:
+      name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg-agent', 'software-properties-common']
+      state: present
+      update_cache: yes
+    tags:
+      - docker
+
+  - name: Add Docker s official GPG key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+    tags:
+      - docker
+
+  - name: Verify that we have the key with the fingerprint
+    apt_key:
+      id: 0EBFCD88
+      state: present
+    tags:
+      - docker
+
+  - name: Set up the stable repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+      update_cache: yes
+    tags:
+      - docker
+
+  - name: Install docker
+    remote_user: ubuntu
+    apt:
+      name: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+      state: present
+      update_cache: yes
+    tags:
+      - docker
+
+  - name: Make sure a service is running
+    systemd:
+      state: started
+      name: docker
+
+  - name: Enable docker service and ensure it is not masked
+    systemd:
+      name: docker
+      enabled: yes
+      masked: no
+
+  - name: Install docker-compose
+    get_url:
+      url : https://github.com/docker/compose/releases/download/1.26.2/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: 'u+x,g+x'
+

@@ -1,0 +1,48 @@
+---
+
+- name: Install ethereum gateway
+  hosts: ethereum_gateway_hosts
+  gather_facts: false
+
+  tasks:
+   - name: Creates ethereum gateway directory
+    file:
+      path: /opt/ethereum_gateway
+      state: directory
+      recurse: yes
+
+  - name: Creates ssh directory for root
+    file:
+      path: /root/.ssh
+      state: directory
+
+  - name: Upload the private key used for Github cloning
+    copy:
+      src: keys/github_booker
+      dest: /root/.ssh/github_booker
+
+  - name: Correct SSH deploy key permissions
+    file:
+       dest: /root/.ssh/github_booker
+       mode: '0600'
+
+  - name: Clone ethereum gateway repo
+    git:
+      repo: git@github.com:fincubator/ethereum_gateway.git
+      dest: /opt/ethereum_gateway
+      key_file: /root/.ssh/github_booker
+      accept_hostkey: yes
+      force: yes
+
+  - name: Run docker containers
+    shell: "cd /opt/booker/docker && docker-compose up -d"
+    environment:
+      DB_USER: "booker"
+      DB_PASSWORD: "booker"
+      DB_DATABASE: "booker"
+      HTTP_PORT: "8080"
+      HTTP_HOST: "0.0.0.0"
+      ZMQ_PROTO: "tcp"
+      ZMQ_PORT: "8081"
+      ZMQ_HOST: "0.0.0.0"
+      HTTP_PORT_HOST: "8080"

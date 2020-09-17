@@ -1,0 +1,15 @@
+[bitshares_gateway_hosts]
+host1.example.com
+host2.example.com
+
+[ethereum_gateway_hosts]
+host1.example.com
+host2.example.com
+
+[booker_hosts]
+host3.example.com
+host1.example.com
+
+[db_hosts]
+host3.example.com
+host1.example.com

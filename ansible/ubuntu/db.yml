@@ -1,0 +1,32 @@
+---
+
+  - name: Run database container
+    docker_container:
+      name: 'pg_db'
+      image: 'postgres:12.3-alpine'
+      state: 'started'
+      env:
+        POSTGRES_USER: "booker"
+        POSTGRES_PASSWORD: "booker"
+        POSTGRES_DB: "booker"
+    register: db_cont_metadata
+
+  - name: Wait for postgres to accept connections
+    wait_for:
+      host: '{{ db_cont_metadata["ansible_facts"]["docker_container"]["NetworkSettings"]["IPAddress"] }}'
+      port: 5432
+      state: drained
+      connect_timeout: 1
+      timeout: 30
+    register: postgres_running
+    until: postgres_running is success
+    retries: 10
+      DB_USER: "booker"
+      DB_PASSWORD: "booker"
+      DB_DATABASE: "booker"
+      HTTP_PORT: "8080"
+      HTTP_HOST: "0.0.0.0"
+      ZMQ_PROTO: "tcp"
+      ZMQ_PORT: "8081"
+      ZMQ_HOST: "0.0.0.0"
+      HTTP_PORT_HOST: "8080"
