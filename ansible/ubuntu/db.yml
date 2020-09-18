@@ -1,15 +1,45 @@
 ---
 
+- hosts: db_hosts
+  vars:
+    container_name: 'app_db01'
+    postgres_db_name: 'app_db'
+    postgres_db_user: 'app_user'
+    postgres_db_password: 'app_password'
+    # booker
+    booker_db_name: 'booker'
+    booker_db_user: 'booker'
+    booker_db_password: 'booker'
+    # ethereum gateway
+    ethereum_gw_db_name: 'payment-gateway'
+    ethereum_gw_db_user: 'payment-gateway'
+    ethereum_gw_db_password: 'payment-gateway'
+    # bitshares gateway
+    bitshares_gw_db_name: 'bitshares-gateway'
+    bitshares_gw_db_user: 'bitshares-gateway'
+    bitshares_gw_db_password: 'bitshares-gateway'
+
+  tasks:
   - name: Run database container
     docker_container:
-      name: 'pg_db'
+      name: "{{ container_name }}"
       image: 'postgres:12.3-alpine'
       state: 'started'
+      published_ports:
+        - 0.0.0.0:6543:5432
       env:
-        POSTGRES_USER: "booker"
-        POSTGRES_PASSWORD: "booker"
-        POSTGRES_DB: "booker"
+        POSTGRES_USER: "{{ postgres_db_user }}"
+        POSTGRES_PASSWORD: "{{ postgres_db_password }}"
+        POSTGRES_DB: "{{ postgres_db_name }}"
+      volumes:
+        - "/opt/postgresql/data:/var/lib/postgresql/data/"
     register: db_cont_metadata
+
+  - name: Install python lib for postgresql
+    apt:
+      name: ['python-psycopg2', 'python3-psycopg2']
+      state: present
+      update_cache: yes
 
   - name: Wait for postgres to accept connections
     wait_for:
@@ -21,13 +51,104 @@
     register: postgres_running
     until: postgres_running is success
     retries: 10
-      DB_USER: "booker"
-      DB_PASSWORD: "booker"
-      DB_DATABASE: "booker"
-      HTTP_PORT: "8080"
-      HTTP_HOST: "0.0.0.0"
-      ZMQ_PROTO: "tcp"
-      ZMQ_PORT: "8081"
-      ZMQ_HOST: "0.0.0.0"
-      HTTP_PORT_HOST: "8080"
+
+# Create booker database and user
+  - name: Create booker user
+    postgresql_user:
+      name: "{{ booker_db_user }}"
+      password: "{{ booker_db_password }}"
+      state: present
+      login_host: localhost
+      db: "{{ postgres_db_name }}"
+      port: 6543
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+
+  - name: Create booker database
+    postgresql_db:
+      name: "{{ booker_db_name }}"
+      owner: "{{ booker_db_user }}"
+      login_host: localhost
+      port: 6543
+      maintenance_db: "{{ postgres_db_name }}"
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
       
+  - name: Create booker user privs
+    postgresql_privs:
+      db: "{{ booker_db_name }}"
+      privs: ALL
+      type: database
+      roles: "{{ booker_db_user }}"
+      login_host: localhost
+      port: 6543
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+      
+# Create ethereum gateway database and user
+  - name: Create ethereum gateway user
+    postgresql_user:
+      name: "{{ ethereum_gw_db_user }}"
+      password: "{{ ethereum_gw_db_password }}"
+      state: present
+      login_host: localhost
+      db: "{{ postgres_db_name }}"
+      port: 6543
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+
+  - name: Create ethereum gateway database
+    postgresql_db:
+      name: "{{ ethereum_gw_db_name }}"
+      owner: "{{ ethereum_gw_db_user }}"
+      login_host: localhost
+      port: 6543
+      maintenance_db: "{{ postgres_db_name }}"
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+      
+  - name: Create ethereum gateway user privs
+    postgresql_privs:
+      db: "{{ ethereum_gw_db_name }}"
+      privs: ALL
+      type: database
+      roles: "{{ ethereum_gw_db_user }}"
+      login_host: localhost
+      port: 6543
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+      
+# Create bitshares gateway database and user
+  - name: Create bitshares gateway user
+    postgresql_user:
+      name: "{{ bitshares_gw_db_user }}"
+      password: "{{ bitshares_gw_db_password }}"
+      state: present
+      login_host: localhost
+      db: "{{ postgres_db_name }}"
+      port: 6543
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+
+  - name: Create bitshares gateway database
+    postgresql_db:
+      name: "{{ bitshares_gw_db_name }}"
+      owner: "{{ bitshares_gw_db_user }}"
+      login_host: localhost
+      port: 6543
+      maintenance_db: "{{ postgres_db_name }}"
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+      
+  - name: Create bitshares gateway user privs
+    postgresql_privs:
+      db: "{{ bitshares_gw_db_name }}"
+      privs: ALL
+      type: database
+      roles: "{{ bitshares_gw_db_user }}"
+      login_host: localhost
+      port: 6543
+      login_user: "{{ postgres_db_user }}"
+      login_password: "{{ postgres_db_password }}"
+
+    
