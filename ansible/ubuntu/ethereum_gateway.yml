@@ -5,44 +5,49 @@
   gather_facts: false
 
   tasks:
-   - name: Creates ethereum gateway directory
+  - name: Creates ethereum gateway directory
     file:
       path: /opt/ethereum_gateway
       state: directory
       recurse: yes
 
-  - name: Creates ssh directory for root
-    file:
-      path: /root/.ssh
-      state: directory
-
-  - name: Upload the private key used for Github cloning
-    copy:
-      src: keys/github_booker
-      dest: /root/.ssh/github_booker
-
-  - name: Correct SSH deploy key permissions
-    file:
-       dest: /root/.ssh/github_booker
-       mode: '0600'
-
   - name: Clone ethereum gateway repo
     git:
-      repo: git@github.com:fincubator/ethereum_gateway.git
+      repo: https://github.com/fincubator/ethereum_gateway.git
       dest: /opt/ethereum_gateway
-      key_file: /root/.ssh/github_booker
       accept_hostkey: yes
       force: yes
 
+  - name: Copy docker-compose.yml for ethereum_gateway only
+    copy:
+      src: ethereum_gateway/docker-compose.yaml
+      dest: /opt/ethereum_gateway/
+
   - name: Run docker containers
-    shell: "cd /opt/booker/docker && docker-compose up -d"
+    shell: "cd /opt/ethereum_gateway && docker-compose up -d"
     environment:
-      DB_USER: "booker"
-      DB_PASSWORD: "booker"
-      DB_DATABASE: "booker"
-      HTTP_PORT: "8080"
-      HTTP_HOST: "0.0.0.0"
-      ZMQ_PROTO: "tcp"
-      ZMQ_PORT: "8081"
-      ZMQ_HOST: "0.0.0.0"
-      HTTP_PORT_HOST: "8080"
+      PORT: 8089
+      DB_HOST: "127.0.0.1"
+      DB_USER: "payment-gateway"
+      DB_PASSWORD: payment-gateway"
+      DB_DATABASE: "payment-gateway"
+      MEMORY_DB_HOST: "127.0.0.1"
+      MEMORY_DB_PORT: "6543"
+      #MEMORY_DB_USERNAME: ""
+      #MEMORY_DB_PASSWORD: ""
+      #ETHEREUM_COLD_KEY: ""
+      #ETHEREUM_SIGN_KEY: ""
+      #WEB3_PROVIDER: ""
+      #WEB3_BATCH_SIZE: ""
+      #ETHEREUM_BLOCK_CHECK_TIME: ""
+      #ETHEREUM_BLOCK_TRY_CHECK_NUMBER: ""
+      #ETHEREUM_REQUIRED_CONFIRMATIONS: ""
+      #ETHEREUM_USDT_ADDRESS: ""
+      #BITSHARES_SIGN_KEY: ""
+      #BITSHARES_MEMO_KEY: ""
+      #BITSHARES_PROVIDER: ""
+      #BITSHARES_CONNECTION_TIMEOUT: ""
+      #BITSHARES_BLOCK_CHECK_TIME: ""
+      #BITSHARES_BLOCK_TRY_CHECK_NUMBER: ""
+      #BITSHARES_ASSET_FEE: ""
+

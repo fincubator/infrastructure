@@ -1,48 +1,49 @@
 ---
 
 - name: Install booker
-  hosts: '{{ target }}'
+  hosts: booker_hosts
   gather_facts: false
+  vars:
+    booker_path: '/opt/booker'
 
   tasks:
-   - name: Creates booker directory
+  - name: Creates booker directory
     file:
-      path: /opt/booker
+      path: "{{ booker_path }}"
       state: directory
       recurse: yes
 
-  - name: Creates ssh directory for root
-    file:
-      path: /root/.ssh
-      state: directory
-
-  - name: Upload the private key used for Github cloning
-    copy:
-      src: keys/github_booker
-      dest: /root/.ssh/github_booker
-
-  - name: Correct SSH deploy key permissions
-    file:
-       dest: /root/.ssh/github_booker
-       mode: '0600'
-
   - name: Clone booker repo
     git:
-      repo: git@github.com:fincubator/booker.git
-      dest: /opt/booker
-      key_file: /root/.ssh/github_booker
+      repo: https://github.com/fincubator/booker.git
+      dest: "{{ booker_path }}"
       accept_hostkey: yes
       force: yes
+      version: master
+
+  - name: Copy docker-compose.yml for booker only
+    copy:
+      src: booker/docker-compose.yml
+      dest: "{{ booker_path }}/"
+
+  - name: Copy .env for booker_api folder
+    copy:
+      src: booker/.env
+      dest: "{{ booker_path }}/booker_api/.env"
+
+  - name: Copy gateways.yml for booker_api folder
+    copy:
+      src: booker/gateways.yml
+      dest: "{{ booker_path }}/"
+
+  - name: Copy .env for booker
+    copy:
+      src: booker/.env
+      dest: "{{ booker_path }}"
 
   - name: Run docker containers
-    shell: "cd /opt/booker/docker && docker-compose up -d"
+    shell: "cd {{ booker_path }} && docker-compose up -d"
     environment:
-      DB_USER: "booker"
-      DB_PASSWORD: "booker"
-      DB_DATABASE: "booker"
       HTTP_PORT: "8080"
       HTTP_HOST: "0.0.0.0"
-      ZMQ_PROTO: "tcp"
-      ZMQ_PORT: "8081"
-      ZMQ_HOST: "0.0.0.0"
       HTTP_PORT_HOST: "8080"

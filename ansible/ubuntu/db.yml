@@ -6,6 +6,7 @@
     postgres_db_name: 'app_db'
     postgres_db_user: 'app_user'
     postgres_db_password: 'app_password'
+    postgres_db_port: 5432
     # booker
     booker_db_name: 'booker'
     booker_db_user: 'booker'
@@ -26,7 +27,7 @@
       image: 'postgres:12.3-alpine'
       state: 'started'
       published_ports:
-        - 0.0.0.0:6543:5432
+        - "0.0.0.0:{{ postgres_db_port }}:5432"
       env:
         POSTGRES_USER: "{{ postgres_db_user }}"
         POSTGRES_PASSWORD: "{{ postgres_db_password }}"
@@ -44,7 +45,7 @@
   - name: Wait for postgres to accept connections
     wait_for:
       host: '{{ db_cont_metadata["ansible_facts"]["docker_container"]["NetworkSettings"]["IPAddress"] }}'
-      port: 5432
+      port: "{{ postgres_db_port }}"
       state: drained
       connect_timeout: 1
       timeout: 30
@@ -60,7 +61,7 @@
       state: present
       login_host: localhost
       db: "{{ postgres_db_name }}"
-      port: 6543
+      port: "{{ postgres_db_port }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
 
@@ -69,7 +70,7 @@
       name: "{{ booker_db_name }}"
       owner: "{{ booker_db_user }}"
       login_host: localhost
-      port: 6543
+      port: "{{ postgres_db_port }}"
       maintenance_db: "{{ postgres_db_name }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
@@ -81,7 +82,7 @@
       type: database
       roles: "{{ booker_db_user }}"
       login_host: localhost
-      port: 6543
+      port: "{{ postgres_db_port }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
       
@@ -93,7 +94,7 @@
       state: present
       login_host: localhost
       db: "{{ postgres_db_name }}"
-      port: 6543
+      port: "{{ postgres_db_port }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
 
@@ -102,7 +103,7 @@
       name: "{{ ethereum_gw_db_name }}"
       owner: "{{ ethereum_gw_db_user }}"
       login_host: localhost
-      port: 6543
+      port: "{{ postgres_db_port }}"
       maintenance_db: "{{ postgres_db_name }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
@@ -114,7 +115,7 @@
       type: database
       roles: "{{ ethereum_gw_db_user }}"
       login_host: localhost
-      port: 6543
+      port: "{{ postgres_db_port }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
       
@@ -126,7 +127,7 @@
       state: present
       login_host: localhost
       db: "{{ postgres_db_name }}"
-      port: 6543
+      port: "{{ postgres_db_port }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
 
@@ -135,7 +136,7 @@
       name: "{{ bitshares_gw_db_name }}"
       owner: "{{ bitshares_gw_db_user }}"
       login_host: localhost
-      port: 6543
+      port: "{{ postgres_db_port }}"
       maintenance_db: "{{ postgres_db_name }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
@@ -147,7 +148,7 @@
       type: database
       roles: "{{ bitshares_gw_db_user }}"
       login_host: localhost
-      port: 6543
+      port: "{{ postgres_db_port }}"
       login_user: "{{ postgres_db_user }}"
       login_password: "{{ postgres_db_password }}"
 
