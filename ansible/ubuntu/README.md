@@ -32,9 +32,74 @@ Python 3.6.9
 ssh-keygen -b 4096
 cat ~/.ssh/id_rsa.pub
 ssh-copy-id -i ~/.ssh/id_rsa user@host
-nano /etc/default/ufw
-IPV6=yes
 
+### Pre-deploy phase
+
+Defaults:
+```bash
+Redis port: 6379
+PostgreSQL port: 5432
+Booker port: 8080
+Ethereum Gateway port: 8089
+```
+
+1. Change port for Redis in (if needed):
+   - redis.yml
+   ```bash
+   redis_db_port: 6379
+   ```
+   - ethereum_gateway.yml
+   ```bash
+   MEMORY_DB_PORT: "6379"
+   ```
+2. Change configs for PosgreSQL in (if needed):
+   > *Custom PostgreSQL port not supported*
+   - db.yml ```bash postgres_db_port: 5432```
+   - booker/.env 
+   ```bash 
+   DB_PORT=5432
+   DB_HOST=127.0.0.1
+   DB_USER=booker
+   DB_PASSWORD=booker
+   DB_DATABASE=booker
+   ```
+   - ethereum_gateway.yml 
+   ```bash 
+   DB_HOST: "127.0.0.1"
+   DB_USER: "payment-gateway"
+   DB_PASSWORD: payment-gateway"
+   DB_DATABASE: "payment-gateway"
+   ```
+3. Change configs for booker in:
+   - booker.yml
+   ```bash
+   HTTP_PORT: "8080"
+   HTTP_PORT_HOST: "8080"
+   ```
+   - booker/.env
+   ```bash
+   HTTP_PORT=8080
+   HTTP_PORT_HOST=8080
+   ```
+4. Fill inventory_dev with your server IPs or DNS names.
+
+
+
+
+
+
+Edit /etc/default/ufw and add this line at end of file
+```bash
+IPV6=yes
+```
+
+Edit /etc/default/docker and add at end of file
+```bash
+DOCKER_OPTS="--iptables=false"
+```
+
+Enable firewall on database server:
+```bash
 ufw status
 ufw default deny incoming
 ufw default allow outgoing
@@ -42,7 +107,9 @@ ufw allow ssh
 ufw enable
 ufw allow from <app-server-ip> to any port <postgresql-port>
 ufw allow from <app-server-ip> to any port <redis-port>
+```
 
+Check firewall status
 ```bash
 # ufw status
 Status: active
@@ -70,6 +137,8 @@ Install redis on database server:
 ```bash
 ansible-playbook redis.yml -i inventory_dev
 ```
+
+Aftes deploy on database server you see this:
 ```bash
 # docker ps
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                    NAMES

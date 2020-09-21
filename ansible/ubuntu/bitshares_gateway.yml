@@ -5,36 +5,35 @@
   gather_facts: false
 
   tasks:
-  - name: Creates ethereum gateway directory
+  - name: Creates bitshares gateway directory
     file:
       path: /opt/bitshares_gateway
       state: directory
       recurse: yes
 
-  - name: Clone ethereum gateway repo
+  - name: Clone bitshares gateway repo
     git:
       repo: https://github.com/fincubator/bitshares_gateway.git
       dest: /opt/bitshares_gateway
       accept_hostkey: yes
       force: yes
+      version: ws-booker-api
 
-  - name: Copy docker-compose.yml for bitshares_gateway only
-    copy:
-      src: bitshares_gateway/docker-compose.yml
-      dest: /opt/bitshares_gateway/
-
-  - name: Copy .env for bitshares_gateway
+  - name: Copy .env for bitshares gateway
     copy:
       src: bitshares_gateway/.env
       dest: /opt/bitshares_gateway/
 
   - name: Run docker containers
-    shell: "cd /opt/bitshares_gateway/ && docker-compose up -d"
+    shell: "cd /opt/bitshares_gateway/ && docker-compose up -d --no-deps gateway"
     environment:
-      DATABASE_PORT: 6543
+      DATABASE_DRIVER: "postgres+psycopg2"
+      DATABASE_PORT: 5432
       DATABASE_HOST: "127.0.0.1"
       DATABASE_USERNAME: "bitshares-gateway"
       DATABASE_PASSWORD: "bitshares-gateway"
       DATABASE_NAME: "bitshares-gateway"
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: 8889
+      WS_HOST: "0.0.0.0"
+      WS_PORT: 7082
