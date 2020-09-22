@@ -18,7 +18,7 @@
       accept_hostkey: yes
       force: yes
 
-  - name: Copy docker-compose.yml for ethereum_gateway only
+  - name: Copy docker-compose.yaml for ethereum_gateway only
     copy:
       src: ethereum_gateway/docker-compose.yaml
       dest: /opt/ethereum_gateway/

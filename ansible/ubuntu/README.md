@@ -18,11 +18,11 @@ Deploy gateway and booker services.
 
 Install Ansible
 ```bash
-# apt update
-# apt -y install python python3
-# apt -y install ansible
-# apt -y install python-docker python-psycopg2 python-pip python3-docker python3-psycopg2 python3-pip
-# apt -y install git
+apt update
+apt -y install python python3
+apt -y install ansible
+apt -y install python-docker python-psycopg2 python-pip python3-docker python3-psycopg2 python3-pip
+apt -y install git
 ```
 
 Check that python3 installed:
@@ -35,13 +35,13 @@ Python 3.6.9
 
 Prepare management ssh keys:
 ```bash
-# ssh-keygen -b 4096
-# cat ~/.ssh/id_rsa.pub
+ssh-keygen -b 4096
+cat ~/.ssh/id_rsa.pub
 ```
 
 Copy key for service server (repeat for each service server):
 ```bash
-# ssh-copy-id -i ~/.ssh/id_rsa user@host
+ssh-copy-id -i ~/.ssh/id_rsa user@host
 ```
 
 Clone fincubator infrastructure repo:
@@ -56,7 +56,8 @@ Edit defaults:
 Redis port: 6379
 PostgreSQL port: 5432
 Booker port: 8080
-Bitshares gateway port: 
+Bitshares gateway port: 8889
+Bitshares gateway websocket port: 7082
 Ethereum gateway port: 8089
 ```
 
@@ -83,6 +84,22 @@ Ethereum gateway port: 8089
    DB_PASSWORD=booker
    DB_DATABASE=booker
    ```
+   - bitshares_gateway/.env
+   ```bash
+   DATABASE_PORT=5432
+   DATABASE_HOST=127.0.0.1
+   DATABASE_USERNAME=bitshares-gateway
+   DATABASE_PASSWORD=bitshares-gateway
+   DATABASE_NAME=bitshares-gateway
+   ```
+   - bitshares_gateway.yml
+   ```bash
+    DATABASE_PORT: 5432
+    DATABASE_HOST: "127.0.0.1"
+    DATABASE_USERNAME: "bitshares-gateway"
+    DATABASE_PASSWORD: "bitshares-gateway"
+    DATABASE_NAME: "bitshares-gateway"
+   ```
    - ethereum_gateway.yml 
    ```bash 
    DB_HOST: "127.0.0.1"
@@ -101,7 +118,33 @@ Ethereum gateway port: 8089
    HTTP_PORT=8080
    HTTP_PORT_HOST=8080
    ```
-4. Fill inventory_dev with your server IPs or DNS names.
+4. Change configs for bitshares gateway in:
+   - bitshares_gateway.yml
+   ```bash
+    HTTP_HOST: "0.0.0.0"
+    HTTP_PORT: 8889
+    WS_HOST: "0.0.0.0"
+    WS_PORT: 7082
+   ```
+   - bitshares_gateway/.env
+   ```bash
+   HTTP_HOST=0.0.0.0
+   HTTP_PORT=8889
+
+   WS_HOST=0.0.0.0
+   WS_PORT=7082
+   ```
+5. Change configs for ethereum gateway in:
+   - ethereum_gateway.yml
+   ```bash
+   PORT: 8089
+   ```
+   - ethereum_gateway/docker-compose.yaml
+   ```bash
+    ports:
+      - "0.0.0.0:8089:8089"
+   ```
+6. Fill inventory_dev with your server IPs or DNS names.
 
 
 
