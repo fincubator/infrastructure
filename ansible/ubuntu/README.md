@@ -2,45 +2,62 @@
 Deploy gateway and booker services.
 
 
-## Install
+## Requirements
 ### Linux (Ubuntu 18.04)
 
-##### Requirements on management server
-* Ansible
+##### Requirements for management server
+* Ansible 2.9.13
 
-##### Requirements on service server
+##### Requirements for service server
 * Git
-* Docker
-* Docker Compose
+* Docker 19.03.12
+* Docker Compose 1.26.2
+
+
+## Prepare management server
 
 Install Ansible
 ```bash
-apt update
-apt -y install python
-apt -y install ansible
-apt -y install python-docker python-psycopg2 python-pip python3-docker python3-psycopg2 python3-pip
+# apt update
+# apt -y install python python3
+# apt -y install ansible
+# apt -y install python-docker python-psycopg2 python-pip python3-docker python3-psycopg2 python3-pip
+# apt -y install git
 ```
 
 Check that python3 installed:
 ```bash
-python -V
+# python -V
 Python 3.6.9
-python3 -V
+# python3 -V
 Python 3.6.9
 ```
 
-ssh-keygen -b 4096
-cat ~/.ssh/id_rsa.pub
-ssh-copy-id -i ~/.ssh/id_rsa user@host
+Prepare management ssh keys:
+```bash
+# ssh-keygen -b 4096
+# cat ~/.ssh/id_rsa.pub
+```
 
-### Pre-deploy phase
+Copy key for service server (repeat for each service server):
+```bash
+# ssh-copy-id -i ~/.ssh/id_rsa user@host
+```
 
-Defaults:
+Clone fincubator infrastructure repo:
+```bash
+cd /opt/
+git clone https://github.com/fincubator/infrastructure.git fincubator_infra
+cd ./fincubator_infra/ansible/ubuntu/
+```
+
+Edit defaults:
 ```bash
 Redis port: 6379
 PostgreSQL port: 5432
 Booker port: 8080
-Ethereum Gateway port: 8089
+Bitshares gateway port: 
+Ethereum gateway port: 8089
 ```
 
 1. Change port for Redis in (if needed):
@@ -52,9 +69,12 @@ Ethereum Gateway port: 8089
    ```bash
    MEMORY_DB_PORT: "6379"
    ```
-2. Change configs for PosgreSQL in (if needed):
+2. Change configs (database server IP, username, password and database name) for PosgreSQL in (if needed):
    > *Custom PostgreSQL port not supported*
-   - db.yml ```bash postgres_db_port: 5432```
+   - db.yml
+   ```bash
+   postgres_db_port: 5432
+   ```
    - booker/.env 
    ```bash 
    DB_PORT=5432
@@ -66,7 +86,7 @@ Ethereum Gateway port: 8089
    - ethereum_gateway.yml 
    ```bash 
    DB_HOST: "127.0.0.1"
-   DB_USER: "payment-gateway"
+   DB_USERNAME: "payment-gateway"
    DB_PASSWORD: payment-gateway"
    DB_DATABASE: "payment-gateway"
    ```
@@ -85,8 +105,7 @@ Ethereum Gateway port: 8089
 
 
 
-
-
+## Prepare databse server
 
 Edit /etc/default/ufw and add this line at end of file
 ```bash
@@ -98,7 +117,7 @@ Edit /etc/default/docker and add at end of file
 DOCKER_OPTS="--iptables=false"
 ```
 
-Enable firewall on database server:
+Enable firewall on server:
 ```bash
 ufw status
 ufw default deny incoming
@@ -122,11 +141,55 @@ To                         Action      From
 22/tcp (v6)                ALLOW       Anywhere (v6)
 ```
 
+## Prepare service server
+
+
+Edit /etc/default/ufw and add this line at end of file
+```bash
+IPV6=yes
+```
+
+Edit /etc/default/docker and add at end of file
+```bash
+DOCKER_OPTS="--iptables=false"
+```
+
+Enable firewall on database server:
+```bash
+ufw status
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow ssh
+ufw enable
+ufw allow <booker-http-port>
+ufw allow <booker-ws-port>
+ufw allow <bitshares-gateway-port>
+ufw allow <ethereum-gateway-port>
+```
+
+Check firewall status
+```bash
+# ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       Anywhere
+<booker-http-port>         ALLOW       Anywhere
+<booker-ws-port>           ALLOW       Anywhere
+<bitshares-gateway-port>   ALLOW       Anywhere
+<ethereum-gateway-port>    ALLOW       Anywhere
+22/tcp (v6)                ALLOW       Anywhere (v6)
+```
+
+## Deploy
 
 Install common software on all hosts:
 ```bash
 ansible-playbook common.yml --extra-vars "target=all" -i inventory_dev
 ```
+
+### Deploy databases
 
 Install postgresql on database server:
 ```bash
@@ -146,7 +209,27 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 35706b4fc30f        postgres:12.3-alpine   "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:5432->5432/tcp   app_db01
 ````
 
+### Deploy services
 
+Install booker on service server:
+```bash
+ansible-playbook booker.yml -i inventory_dev
+```
 
+Install bitshares gateway on service server:
+```bash
+ansible-playbook bitshares_gateway.yml -i inventory_dev
+```
 
+Install ethereum gateway on service server:
+```bash
+ansible-playbook ethereum_gateway.yml -i inventory_dev
+```
 
+Aftes deploy on database server you see this:
+```bash
+# docker ps
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
+60f3ba4ff59d        redis:5.0.7-buster     "docker-entrypoint.s…"   11 seconds ago      Up 9 seconds        0.0.0.0:6379->6379/tcp   app_memory_db01
+35706b4fc30f        postgres:12.3-alpine   "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:5432->5432/tcp   app_db01
+````
