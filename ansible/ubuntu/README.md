@@ -133,6 +133,9 @@ Ethereum gateway port: 8089
 
    WS_HOST=0.0.0.0
    WS_PORT=7082
+   
+   BOOKER_HOST=<booker-ip>
+   BOOKER_PORT=<booker-port>
    ```
 5. Change configs for ethereum gateway in:
    - ethereum_gateway.yml
@@ -254,17 +257,53 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 
 ### Deploy services
 
-Install booker on service server:
+#### Install booker on service server
 ```bash
 ansible-playbook booker.yml -i inventory_dev
 ```
 
-Install bitshares gateway on service server:
+#### [Test enviroment] Install bitshares gateway on service server
 ```bash
 ansible-playbook bitshares_gateway.yml -i inventory_dev
 ```
 
-Install ethereum gateway on service server:
+#### [Production enviroment] Install bitshares gateway on service server
+```bash
+ansible-playbook bitshares_gateway_prod.yml -i inventory_dev
+```
+
+Next, connect to service server via ssh. 
+```bash
+# cd /opt/bitshares-gateway
+# docker-compose run gateway
+ACCOUNT is new account. Let's add and encrypt keys
+Please Enter ACCOUNT active private key
+```
+Enter your active key and press ENTER
+
+```bash
+ACCOUNT is new account. Let's add and encrypt keys
+Please Enter ACCOUNT memo private key
+```
+Enter your memokey and press ENTER
+
+```bash
+Now enter password to encrypt keys
+```
+Enter your password twice.
+
+> No limit on characters in the password.
+> No way to recover a forgotten password.
+
+If container restarted you need to run it with command:
+```bash
+# docker run gateway
+Account ACCOUNT found. Enter password to decrypt keys
+```
+Enter your password.
+
+
+#### Install ethereum gateway on service server
 ```bash
 ansible-playbook ethereum_gateway.yml -i inventory_dev
 ```
@@ -272,7 +311,8 @@ ansible-playbook ethereum_gateway.yml -i inventory_dev
 Aftes deploy on database server you see this:
 ```bash
 # docker ps
-CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
-60f3ba4ff59d        redis:5.0.7-buster     "docker-entrypoint.s…"   11 seconds ago      Up 9 seconds        0.0.0.0:6379->6379/tcp   app_memory_db01
-35706b4fc30f        postgres:12.3-alpine   "docker-entrypoint.s…"   5 minutes ago       Up 5 minutes        0.0.0.0:5432->5432/tcp   app_db01
+CONTAINER ID        IMAGE                       COMMAND                  CREATED             STATUS              PORTS                                            NAMES
+900f8c900353        ethereum_gateway_app        "docker-entrypoint.s…"   33 minutes ago      Up 33 minutes       0.0.0.0:8089->8089/tcp                           ethereum_gateway_app_1
+a54a3159939b        bitshares_gateway_gateway   "bash -c 'pipenv run…"   23 hours ago        Up 2 hours          0.0.0.0:7082->7082/tcp, 0.0.0.0:8889->8889/tcp   gateway
+883c5240898b        booker_booker               "bash -c 'pipenv run…"   25 hours ago        Up 2 hours          0.0.0.0:8080->8080/tcp                           booker
 ````
