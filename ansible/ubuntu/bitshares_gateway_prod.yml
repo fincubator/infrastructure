@@ -1,0 +1,26 @@
+---
+
+- name: Install bitshares gateway
+  hosts: bitshares_gateway_hosts
+  gather_facts: false
+
+  tasks:
+  - name: Creates bitshares gateway directory
+    file:
+      path: /opt/bitshares_gateway
+      state: directory
+      recurse: yes
+
+  - name: Clone bitshares gateway repo
+    git:
+      repo: https://github.com/fincubator/bitshares_gateway.git
+      dest: /opt/bitshares_gateway
+      accept_hostkey: yes
+      force: yes
+      version: ws-booker-api
+
+  - name: Copy .env for bitshares gateway
+    copy:
+      src: bitshares_gateway/.env
+      dest: /opt/bitshares_gateway/
+
