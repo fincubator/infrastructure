@@ -1,0 +1,30 @@
+---
+
+- hosts: db_hosts
+  vars:
+    container_name: 'app_memory_db01'
+    redis_db_port: 6379
+
+  tasks:
+  - name: Run database container
+    docker_container:
+      name: "{{ container_name }}"
+      image: 'redis:5.0.7-buster'
+      state: 'started'
+      published_ports:
+        - "0.0.0.0:{{ redis_db_port }}:6379"
+      volumes:
+        - "/opt/redis/data:/var/lib/redis"
+        - "/opt/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf"
+    register: db_cont_metadata
+
+  - name: Wait for redis to accept connections
+    wait_for:
+      host: '{{ db_cont_metadata["ansible_facts"]["docker_container"]["NetworkSettings"]["IPAddress"] }}'
+      port: "{{ redis_db_port }}"
+      state: drained
+      connect_timeout: 1
+      timeout: 30
+    register: redis_running
+    until: redis_running is success
+    retries: 10

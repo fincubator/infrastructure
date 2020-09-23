@@ -1,0 +1,36 @@
+---
+
+- name: Install ethereum gateway
+  hosts: ethereum_gateway_hosts
+  gather_facts: false
+
+  tasks:
+  - name: Creates ethereum gateway directory
+    file:
+      path: /opt/ethereum_gateway
+      state: directory
+      recurse: yes
+
+  - name: Clone ethereum gateway repo
+    git:
+      repo: https://github.com/fincubator/ethereum_gateway.git
+      dest: /opt/ethereum_gateway
+      accept_hostkey: yes
+      force: yes
+
+  - name: Copy docker-compose.yaml for ethereum_gateway only
+    copy:
+      src: ethereum_gateway/docker-compose.yaml
+      dest: /opt/ethereum_gateway/
+
+  - name: Run docker containers
+    shell: "cd /opt/ethereum_gateway && docker-compose up -d"
+    environment:
+      PORT: 8089
+      DB_HOST: "127.0.0.1"
+      DB_USER: "payment-gateway"
+      DB_PASSWORD: payment-gateway"
+      DB_DATABASE: "payment-gateway"
+      MEMORY_DB_HOST: "127.0.0.1"
+      MEMORY_DB_PORT: "6379"
+

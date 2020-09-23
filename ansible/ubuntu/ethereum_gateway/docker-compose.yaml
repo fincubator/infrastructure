@@ -1,0 +1,34 @@
+version: '2.0'
+services:
+  app:
+    build:
+      context: .
+      args:
+        - PORT
+    ports:
+      - "0.0.0.0:8089:8089"
+    environment:
+      - PORT
+      - DB_HOST
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_DATABASE
+      - MEMORY_DB_HOST
+      - MEMORY_DB_PORT
+      - MEMORY_DB_USERNAME
+      - MEMORY_DB_PASSWORD
+      - ETHEREUM_COLD_KEY
+      - ETHEREUM_SIGN_KEY
+      - WEB3_PROVIDER
+      - WEB3_BATCH_SIZE
+      - ETHEREUM_BLOCK_CHECK_TIME
+      - ETHEREUM_BLOCK_TRY_CHECK_NUMBER
+      - ETHEREUM_REQUIRED_CONFIRMATIONS
+      - ETHEREUM_USDT_ADDRESS
+      - BITSHARES_SIGN_KEY
+      - BITSHARES_MEMO_KEY
+      - BITSHARES_PROVIDER
+      - BITSHARES_CONNECTION_TIMEOUT
+      - BITSHARES_BLOCK_CHECK_TIME
+      - BITSHARES_BLOCK_TRY_CHECK_NUMBER
+      - BITSHARES_ASSET_FEE
