@@ -308,7 +308,9 @@ Enter your password.
 ansible-playbook ethereum_gateway.yml -i inventory_dev
 ```
 
-Aftes deploy on database server you see this:
+
+
+Aftes all deploys on service server you see this:
 ```bash
 # docker ps
 CONTAINER ID        IMAGE                       COMMAND                  CREATED             STATUS              PORTS                                            NAMES
