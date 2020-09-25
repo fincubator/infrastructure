@@ -25,15 +25,20 @@
     copy:
       src: booker/.env
       dest: "{{ booker_path }}/booker_api/.env"
-
-  - name: Copy gateways.yml for booker_api folder
-    copy:
-      src: booker/gateways.yml
-      dest: "{{ booker_path }}/"
-
+      
   - name: Copy .env for booker
     copy:
       src: booker/.env
+      dest: "{{ booker_path }}"
+
+  - name: Copy docker-compose.yml for booker folder
+    copy:
+      src: booker/docker-compose.yml
+      dest: "{{ booker_path }}"
+      
+  - name: Copy gateways.yml for booker folder
+    copy:
+      src: booker/gateways.yml
       dest: "{{ booker_path }}"
 
   - name: Run docker containers

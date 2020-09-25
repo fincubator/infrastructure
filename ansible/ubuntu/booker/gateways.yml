@@ -1,0 +1,21 @@
+USDT:
+  # address of NATIVE (Ethereum ERC20 USDT Gateway)
+  native:
+    False # Not runned/implemented
+
+  # address of TARGET (BitShares FINTEH.USDT Gateway)
+  target:
+    - 0.0.0.0 # host
+    - 6666    # port
+
+
+#Add more remote gateways servers addresses here like:
+
+#BTC:
+#  native:
+#    host: some.btc_host
+#    port: 55551
+#  target:
+#    host: some.finteh.btc_host
+#    port: 12345
+# etc

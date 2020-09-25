@@ -1,0 +1,14 @@
+[bitshares_gateway_hosts]
+128.18.11.95
+
+[ethereum_gateway_hosts]
+128.18.11.55
+
+[booker_hosts]
+128.18.11.15
+
+[db_hosts]
+128.18.11.24
+
+[db_hosts:vars]
+ansible_python_interpreter=/usr/bin/python3

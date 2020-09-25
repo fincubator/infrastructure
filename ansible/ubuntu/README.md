@@ -21,14 +21,21 @@ Install Ansible
 apt update
 apt -y install python
 apt -y install python3
-apt -y install ansible
 apt -y install python-docker python-psycopg2 python-pip
 apt -y install python3-docker python3-psycopg2 python3-pip
 apt -y install git
+apt -y install ansible
 ```
 
-Check that python3 installed:
+Check that all installed:
 ```bash
+# ansible --version
+ansible 2.5.1
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/root/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/dist-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.17 (default, Jul 20 2020, 15:37:01) [GCC 7.5.0]
 # python -V
 Python 2.7.18
 # python3 -V
@@ -53,7 +60,7 @@ git clone https://github.com/fincubator/infrastructure.git fincubator_infra
 cd ./fincubator_infra/ansible/ubuntu/
 ```
 
-Edit defaults:
+Default ports:
 ```bash
 Redis port: 6379
 PostgreSQL port: 5432
@@ -62,8 +69,8 @@ Bitshares gateway port: 8889
 Bitshares gateway websocket port: 7082
 Ethereum gateway port: 8089
 ```
-
-1. Change port for Redis in (if needed):
+Edit defaults if needed
+1. Change port for Redis in:
    - redis.yml
    ```bash
    redis_db_port: 6379
@@ -72,7 +79,7 @@ Ethereum gateway port: 8089
    ```bash
    MEMORY_DB_PORT: "6379"
    ```
-2. Change configs (database server IP, username, password and database name) for PosgreSQL in (if needed):
+2. Change configs (database server IP, username, password and database name) for PosgreSQL in:
    > *Custom PostgreSQL port not supported*
    - db.yml
    ```bash
@@ -136,7 +143,7 @@ Ethereum gateway port: 8089
    WS_HOST=0.0.0.0
    WS_PORT=7082
    
-   BOOKER_HOST=<booker-ip>
+   BOOKER_HOST=127.0.0.1
    BOOKER_PORT=8080
    ```
 5. Change configs for ethereum gateway in:

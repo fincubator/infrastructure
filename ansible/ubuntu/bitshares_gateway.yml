@@ -24,6 +24,11 @@
       src: bitshares_gateway/.env
       dest: /opt/bitshares_gateway/
 
+  - name: Copy docker-compose.yml for bitshares_gateway folder
+    copy:
+      src: bitshares_gateway/docker-compose.yml
+      dest: /opt/bitshares_gateway/
+
   - name: Run docker containers
     shell: "cd /opt/bitshares_gateway/ && docker-compose up -d --no-deps gateway"
     environment:

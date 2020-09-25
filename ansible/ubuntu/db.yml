@@ -59,6 +59,7 @@
       name: "{{ booker_db_user }}"
       password: "{{ booker_db_password }}"
       state: present
+      encrypted: yes
       login_host: localhost
       db: "{{ postgres_db_name }}"
       port: "{{ postgres_db_port }}"
@@ -92,6 +93,7 @@
       name: "{{ ethereum_gw_db_user }}"
       password: "{{ ethereum_gw_db_password }}"
       state: present
+      encrypted: yes
       login_host: localhost
       db: "{{ postgres_db_name }}"
       port: "{{ postgres_db_port }}"
@@ -125,6 +127,7 @@
       name: "{{ bitshares_gw_db_user }}"
       password: "{{ bitshares_gw_db_password }}"
       state: present
+      encrypted: yes
       login_host: localhost
       db: "{{ postgres_db_name }}"
       port: "{{ postgres_db_port }}"

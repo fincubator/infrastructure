@@ -23,4 +23,9 @@
     copy:
       src: bitshares_gateway/.env
       dest: /opt/bitshares_gateway/
+      
+  - name: Copy gateway.yml for booker_api folder
+    copy:
+      src: booker/gateway.yml
+      dest: /opt/bitshares_gateway/
 
