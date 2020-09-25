@@ -19,16 +19,18 @@ Deploy gateway and booker services.
 Install Ansible
 ```bash
 apt update
-apt -y install python python3
+apt -y install python
+apt -y install python3
 apt -y install ansible
-apt -y install python-docker python-psycopg2 python-pip python3-docker python3-psycopg2 python3-pip
+apt -y install python-docker python-psycopg2 python-pip
+apt -y install python3-docker python3-psycopg2 python3-pip
 apt -y install git
 ```
 
 Check that python3 installed:
 ```bash
 # python -V
-Python 3.6.9
+Python 2.7.18
 # python3 -V
 Python 3.6.9
 ```
@@ -135,7 +137,7 @@ Ethereum gateway port: 8089
    WS_PORT=7082
    
    BOOKER_HOST=<booker-ip>
-   BOOKER_PORT=<booker-port>
+   BOOKER_PORT=8080
    ```
 5. Change configs for ethereum gateway in:
    - ethereum_gateway.yml
@@ -148,7 +150,11 @@ Ethereum gateway port: 8089
       - "0.0.0.0:8089:8089"
    ```
 6. Fill inventory_dev with your server IPs or DNS names.
-
+   - inventory_dev (example)
+   ```bash
+   [db_hosts]
+   128.197.40.38
+   ```
 
 
 ## Prepare databse server
@@ -208,8 +214,8 @@ ufw default allow outgoing
 ufw allow ssh
 ufw enable
 ufw allow <booker-http-port>
-ufw allow <booker-ws-port>
 ufw allow <bitshares-gateway-port>
+ufw allow <bitshares-gateway-ws-port>
 ufw allow <ethereum-gateway-port>
 ```
 

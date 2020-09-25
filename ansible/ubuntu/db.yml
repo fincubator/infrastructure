@@ -36,11 +36,11 @@
         - "/opt/postgresql/data:/var/lib/postgresql/data/"
     register: db_cont_metadata
 
-  - name: Install python lib for postgresql
-    apt:
-      name: ['python-psycopg2', 'python3-psycopg2']
-      state: present
-      update_cache: yes
+#  - name: Install python lib for postgresql
+#    apt:
+#      name: ['python-psycopg2', 'python3-psycopg2']
+#      state: present
+#      update_cache: yes
 
   - name: Wait for postgres to accept connections
     wait_for:
