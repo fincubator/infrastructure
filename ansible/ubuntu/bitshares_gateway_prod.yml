@@ -17,7 +17,7 @@
       dest: /opt/bitshares_gateway
       accept_hostkey: yes
       force: yes
-      version: ws-booker-api
+      version: master
 
   - name: Copy .env for bitshares gateway
     copy:
