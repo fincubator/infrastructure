@@ -28,7 +28,7 @@
     environment:
       PORT: 8089
       DB_HOST: "127.0.0.1"
-      DB_USER: "payment-gateway"
+      DB_USERNAME: "payment-gateway"
       DB_PASSWORD: payment-gateway"
       DB_DATABASE: "payment-gateway"
       MEMORY_DB_HOST: "127.0.0.1"
