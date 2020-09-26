@@ -184,7 +184,7 @@ Edit defaults:
       - "0.0.0.0:8089:8089"
    ```
 
-=====
+---
 
 ## Prepare databse server
 
@@ -222,7 +222,7 @@ To                         Action      From
 22/tcp (v6)                ALLOW       Anywhere (v6)
 ```
 
-=====
+---
 
 ## Prepare service server
 
@@ -265,7 +265,7 @@ To                         Action      From
 22/tcp (v6)                ALLOW       Anywhere (v6)
 ```
 
-=====
+---
 
 ## Deploy
 
