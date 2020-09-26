@@ -29,7 +29,7 @@
       PORT: 8089
       DB_HOST: "127.0.0.1"
       DB_USERNAME: "payment-gateway"
-      DB_PASSWORD: payment-gateway"
+      DB_PASSWORD: "payment-gateway"
       DB_DATABASE: "payment-gateway"
       MEMORY_DB_HOST: "127.0.0.1"
       MEMORY_DB_PORT: "6379"
