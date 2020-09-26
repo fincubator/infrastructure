@@ -6,7 +6,7 @@ Deploy gateway and booker services.
 ### Linux (Ubuntu 18.04)
 
 ##### Requirements for management server
-* Ansible 2.9.13
+* Ansible 2.6 or above
 
 ##### Requirements for service server
 * Git
@@ -69,7 +69,39 @@ Bitshares gateway port: 8889
 Bitshares gateway websocket port: 7082
 Ethereum gateway port: 8089
 ```
-Edit defaults if needed
+
+Edit defaults:
+1. Change database server IP for PosgreSQL in:
+   - booker/.env 
+   ```bash 
+   DB_HOST=127.0.0.1
+   ```
+   - bitshares_gateway/.env
+   ```bash
+   DATABASE_HOST=127.0.0.1
+   ```
+   - bitshares_gateway.yml
+   ```bash
+    DATABASE_HOST: "127.0.0.1"
+   ```
+   - ethereum_gateway.yml 
+   ```bash 
+   DB_HOST: "127.0.0.1"
+   ```
+2. Change booker server IP for bitshares gateway in:
+   - bitshares_gateway/.env
+   ```bash
+   BOOKER_HOST=127.0.0.1
+   ```
+3. Fill invetory file with your server IPs or DNS names.
+   - inventory_dev (example)
+   ```bash
+   [db_hosts]
+   128.197.40.38
+   ```
+
+
+(Optional) Change ports default:
 1. Change port for Redis in:
    - redis.yml
    ```bash
@@ -88,7 +120,6 @@ Edit defaults if needed
    - booker/.env 
    ```bash 
    DB_PORT=5432
-   DB_HOST=127.0.0.1
    DB_USER=booker
    DB_PASSWORD=booker
    DB_DATABASE=booker
@@ -96,7 +127,6 @@ Edit defaults if needed
    - bitshares_gateway/.env
    ```bash
    DATABASE_PORT=5432
-   DATABASE_HOST=127.0.0.1
    DATABASE_USERNAME=bitshares-gateway
    DATABASE_PASSWORD=bitshares-gateway
    DATABASE_NAME=bitshares-gateway
@@ -104,14 +134,12 @@ Edit defaults if needed
    - bitshares_gateway.yml
    ```bash
     DATABASE_PORT: 5432
-    DATABASE_HOST: "127.0.0.1"
     DATABASE_USERNAME: "bitshares-gateway"
     DATABASE_PASSWORD: "bitshares-gateway"
     DATABASE_NAME: "bitshares-gateway"
    ```
    - ethereum_gateway.yml 
    ```bash 
-   DB_HOST: "127.0.0.1"
    DB_USERNAME: "payment-gateway"
    DB_PASSWORD: payment-gateway"
    DB_DATABASE: "payment-gateway"
@@ -143,7 +171,6 @@ Edit defaults if needed
    WS_HOST=0.0.0.0
    WS_PORT=7082
    
-   BOOKER_HOST=127.0.0.1
    BOOKER_PORT=8080
    ```
 5. Change configs for ethereum gateway in:
@@ -156,13 +183,8 @@ Edit defaults if needed
     ports:
       - "0.0.0.0:8089:8089"
    ```
-6. Fill inventory_dev with your server IPs or DNS names.
-   - inventory_dev (example)
-   ```bash
-   [db_hosts]
-   128.197.40.38
-   ```
 
+=====
 
 ## Prepare databse server
 
@@ -199,6 +221,8 @@ To                         Action      From
 <redis-port>               ALLOW       <app-server-ip>
 22/tcp (v6)                ALLOW       Anywhere (v6)
 ```
+
+=====
 
 ## Prepare service server
 
@@ -240,6 +264,8 @@ To                         Action      From
 <ethereum-gateway-port>    ALLOW       Anywhere
 22/tcp (v6)                ALLOW       Anywhere (v6)
 ```
+
+=====
 
 ## Deploy
 
