@@ -45,9 +45,9 @@ Python 3.6.9
 Prepare management ssh keys:
 ```bash
 ssh-keygen -b 4096
-cat ~/.ssh/id_rsa.pub
 ```
 
+> Skip this step when you place all services and database on one server.
 Copy key for service server (repeat for each service server):
 ```bash
 ssh-copy-id -i ~/.ssh/id_rsa user@host
@@ -70,12 +70,19 @@ Bitshares gateway websocket port: 7082
 Ethereum gateway port: 8089
 ```
 
+> When you place all services and database on one server don't user 127.0.0.1 or localhost. 
+> Use your server EXTERNAL IP.
+
 Edit defaults:
-1. Change database server IP for PosgreSQL in:
+1. Replace 127.0.0.1 to your database server IP:
    - booker/.env 
    ```bash 
    DB_HOST=127.0.0.1
    ```
+   - booker/docker-compose.yml
+   ```bash 
+   DB_HOST: "127.0.0.1"
+   ```   
    - bitshares_gateway/.env
    ```bash
    DATABASE_HOST=127.0.0.1
@@ -87,13 +94,28 @@ Edit defaults:
    - ethereum_gateway.yml 
    ```bash 
    DB_HOST: "127.0.0.1"
+   MEMORY_DB_HOST: "127.0.0.1"
    ```
-2. Change booker server IP for bitshares gateway in:
+   - bitshares_gateway/gateway.yml
+   ```bash 
+   host: 127.0.0.1
+   ```   
+2. Replace 127.0.0.1 to your bitshares gateway server IP:
+   - booker/gateways.yml
+   ```bash
+       - 127.0.0.1 # host
+   ```
+3. Replace 127.0.0.1 to your ethereum gateway server IP:
+   - bitshares_gateway/gateway.yml
+   ```bash 
+   host: 127.0.0.1
+   ```      
+4. Replace 127.0.0.1 to your booker server IP:
    - bitshares_gateway/.env
    ```bash
    BOOKER_HOST=127.0.0.1
    ```
-3. Fill invetory file with your server IPs or DNS names.
+5. Fill invetory file with your server IPs or DNS names.
    - inventory_dev (example)
    ```bash
    [db_hosts]
@@ -244,7 +266,7 @@ ufw default deny incoming
 ufw default allow outgoing
 ufw allow ssh
 ufw enable
-ufw allow <booker-http-port>
+ufw allow <booker-port>
 ufw allow <bitshares-gateway-port>
 ufw allow <bitshares-gateway-ws-port>
 ufw allow <ethereum-gateway-port>
@@ -258,8 +280,8 @@ Status: active
 To                         Action      From
 --                         ------      ----
 22/tcp                     ALLOW       Anywhere
-<booker-http-port>         ALLOW       Anywhere
-<booker-ws-port>           ALLOW       Anywhere
+<booker-port>              ALLOW       Anywhere
+<bitshares-gateway-ws-port>>     ALLOW       Anywhere
 <bitshares-gateway-port>   ALLOW       Anywhere
 <ethereum-gateway-port>    ALLOW       Anywhere
 22/tcp (v6)                ALLOW       Anywhere (v6)

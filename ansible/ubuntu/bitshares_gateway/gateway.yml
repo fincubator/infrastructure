@@ -22,6 +22,6 @@ nodes:
 # Native gateway is an mirror-gateway to another blockchain. For example, if you deploy GATEWAY.ETH target chain,
 # Native gateway is Ethereum gateway.
 native:
-    host: 8.8.8.8
-    http_port: 8080
+    host: 127.0.0.1
+    http_port: 8089
     zmq_port: 9090

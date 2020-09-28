@@ -5,8 +5,8 @@ USDT:
 
   # address of TARGET (BitShares FINTEH.USDT Gateway)
   target:
-    - 0.0.0.0 # host
-    - 6666    # port
+    - 127.0.0.1 # host
+    - 8889   # port
 
 
 #Add more remote gateways servers addresses here like:
