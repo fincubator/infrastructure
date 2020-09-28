@@ -48,6 +48,7 @@ ssh-keygen -b 4096
 ```
 
 > Skip this step when you place all services and database on one server.
+
 Copy key for service server (repeat for each service server):
 ```bash
 ssh-copy-id -i ~/.ssh/id_rsa user@host
