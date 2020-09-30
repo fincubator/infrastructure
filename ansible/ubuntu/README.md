@@ -37,7 +37,7 @@ ansible 2.5.1
   executable location = /usr/bin/ansible
   python version = 2.7.17 (default, Jul 20 2020, 15:37:01) [GCC 7.5.0]
 # python -V
-Python 2.7.18
+Python 2.7.17
 # python3 -V
 Python 3.6.9
 ```
@@ -97,10 +97,6 @@ Edit defaults:
    DB_HOST: "127.0.0.1"
    MEMORY_DB_HOST: "127.0.0.1"
    ```
-   - bitshares_gateway/gateway.yml
-   ```bash 
-   host: 127.0.0.1
-   ```   
 2. Replace 127.0.0.1 to your bitshares gateway server IP:
    - booker/gateways.yml
    ```bash
@@ -116,16 +112,13 @@ Edit defaults:
    ```bash
    BOOKER_HOST=127.0.0.1
    ```
-5. Fill invetory file with your server IPs or DNS names.
+5. Fill inventory file with your server IPs or DNS names.
    - inventory_dev (example)
    ```bash
    [db_hosts]
    128.197.40.38
    ```
-
-
-(Optional) Change ports default:
-1. Change port for Redis in:
+6. (Optional) Change port for Redis in:
    - redis.yml
    ```bash
    redis_db_port: 6379
@@ -134,7 +127,7 @@ Edit defaults:
    ```bash
    MEMORY_DB_PORT: "6379"
    ```
-2. Change configs (database server IP, username, password and database name) for PosgreSQL in:
+7. (Optional) Change configs (database server IP, username, password and database name) for PosgreSQL in:
    > *Custom PostgreSQL port not supported*
    - db.yml
    ```bash
@@ -167,7 +160,7 @@ Edit defaults:
    DB_PASSWORD: payment-gateway"
    DB_DATABASE: "payment-gateway"
    ```
-3. Change configs for booker in:
+8. (Optional) Change configs for booker in:
    - booker.yml
    ```bash
    HTTP_PORT: "8080"
@@ -178,7 +171,7 @@ Edit defaults:
    HTTP_PORT=8080
    HTTP_PORT_HOST=8080
    ```
-4. Change configs for bitshares gateway in:
+9. (Optional) Change configs for bitshares gateway in:
    - bitshares_gateway.yml
    ```bash
     HTTP_HOST: "0.0.0.0"
@@ -196,7 +189,7 @@ Edit defaults:
    
    BOOKER_PORT=8080
    ```
-5. Change configs for ethereum gateway in:
+10. (Optional) Change configs for ethereum gateway in:
    - ethereum_gateway.yml
    ```bash
    PORT: 8089
@@ -211,14 +204,9 @@ Edit defaults:
 
 ## Prepare databse server
 
-Edit /etc/default/ufw and add this line at end of file
+Edit `/etc/default/ufw` and add this line at end of file
 ```bash
 IPV6=yes
-```
-
-Edit /etc/default/docker and add at end of file
-```bash
-DOCKER_OPTS="--iptables=false"
 ```
 
 Enable firewall on server:
@@ -250,14 +238,9 @@ To                         Action      From
 ## Prepare service server
 
 
-Edit /etc/default/ufw and add this line at end of file
+Edit `/etc/default/ufw` and add this line at end of file
 ```bash
 IPV6=yes
-```
-
-Edit /etc/default/docker and add at end of file
-```bash
-DOCKER_OPTS="--iptables=false"
 ```
 
 Enable firewall on database server:
@@ -297,6 +280,16 @@ Install common software on all hosts:
 ansible-playbook common.yml --extra-vars "target=all" -i inventory_dev
 ```
 
+On database server edit `/etc/default/docker` and add at end of file
+```bash
+DOCKER_OPTS="--iptables=false"
+```
+
+On service server edit `/etc/default/docker` and add at end of file
+```bash
+DOCKER_OPTS="--iptables=false"
+```
+
 ### Deploy databases
 
 Install postgresql on database server:
@@ -334,42 +327,41 @@ ansible-playbook bitshares_gateway.yml -i inventory_dev
 ansible-playbook bitshares_gateway_prod.yml -i inventory_dev
 ```
 
-Next, connect to service server via ssh. 
+[Production enviroment] Next, connect to service server via ssh. 
 ```bash
 # cd /opt/bitshares-gateway
 # docker-compose run gateway
 ACCOUNT is new account. Let's add and encrypt keys
 Please Enter ACCOUNT active private key
 ```
-Enter your active key and press ENTER
+[Production enviroment] Enter your active key and press ENTER
 
 ```bash
 ACCOUNT is new account. Let's add and encrypt keys
 Please Enter ACCOUNT memo private key
 ```
-Enter your memokey and press ENTER
+[Production enviroment] Enter your memokey and press ENTER
 
 ```bash
 Now enter password to encrypt keys
 ```
-Enter your password twice.
+[Production enviroment] Enter your password twice.
 
 > No limit on characters in the password.
 > No way to recover a forgotten password.
 
-If container restarted you need to run it with command:
+[Production enviroment] If container restarted you need to run it with command:
 ```bash
 # docker run gateway
 Account ACCOUNT found. Enter password to decrypt keys
 ```
-Enter your password.
+[Production enviroment] Type your password and press Enter.
 
 
 #### Install ethereum gateway on service server
 ```bash
 ansible-playbook ethereum_gateway.yml -i inventory_dev
 ```
-
 
 
 Aftes all deploys on service server you see this:
