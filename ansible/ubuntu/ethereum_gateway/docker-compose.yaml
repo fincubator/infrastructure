@@ -6,7 +6,7 @@ services:
       args:
         - PORT
     ports:
-      - "0.0.0.0:8089:8089"
+      - '${HOST_PORT}:${PORT}'
     environment:
       - PORT
       - DB_HOST
@@ -17,6 +17,8 @@ services:
       - MEMORY_DB_PORT
       - MEMORY_DB_USERNAME
       - MEMORY_DB_PASSWORD
+      - BOOKER_PROVIDER
+      - EXCHANGE_PREFIX
       - ETHEREUM_COLD_KEY
       - ETHEREUM_SIGN_KEY
       - WEB3_PROVIDER

@@ -6,7 +6,7 @@ Deploy gateway and booker services.
 ### Linux (Ubuntu 18.04)
 
 ##### Requirements for management server
-* Ansible 2.6 or above
+* Ansible 2.5 or above
 
 ##### Requirements for service server
 * Git
@@ -71,7 +71,7 @@ Bitshares gateway websocket port: 7082
 Ethereum gateway port: 8089
 ```
 
-> When you place all services and database on one server don't user 127.0.0.1 or localhost. 
+> When you place all services and database on one server don't use 127.0.0.1 or localhost. 
 > Use your server EXTERNAL IP.
 
 Edit defaults:
@@ -100,25 +100,69 @@ Edit defaults:
 2. Replace 127.0.0.1 to your bitshares gateway server IP:
    - booker/gateways.yml
    ```bash
-       - 127.0.0.1 # host
+	  target:
+		- 127.0.0.1 # host
    ```
 3. Replace 127.0.0.1 to your ethereum gateway server IP:
-   - bitshares_gateway/gateway.yml
-   ```bash 
-   host: 127.0.0.1
-   ```      
-4. Replace 127.0.0.1 to your booker server IP:
+   - booker/gateways.yml
+   ```bash
+	  native:
+		- 127.0.0.1 # host
+   ```   
+4. Replace <your-prefix> with your exchange prefix:
+> EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
+   - booker/.env
+   ```bash
+   EXCHANGE_PREFIX=<your-prefix>
+   ``` 
+5. Replace 127.0.0.1 to your booker server IP:
    - bitshares_gateway/.env
    ```bash
    BOOKER_HOST=127.0.0.1
    ```
-5. Fill inventory file with your server IPs or DNS names.
+6. Replace <your-prefix> with your exchange prefix:
+   - bitshares_gateway/gateway.yml
+   ```bash
+   gateway_prefix: <your-prefix>
+   ```
+7. Replace all variables with your bitshares data:
+   - bitshares_gateway/gateway.yml
+   ```bash
+	account: <your-account>
+
+	keys:
+	  active: <your-active-key>
+	  memo: <your-memo-key>
+   ```
+8. Replace <your-prefix> with your exchange prefix:
+> EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
+   - ethereum_gateway.yml
+   ```bash
+	EXCHANGE_PREFIX: "<your-prefix>"
+   ```
+   - ethereum_gateway/.env
+   ```bash
+	EXCHANGE_PREFIX=<your-prefix>
+   ```   
+9. Replace all variables with your ethereum data:
+   - ethereum_gateway/.env
+   ```bash
+    ETHEREUM_USDT_ADDRESS=<your-asset-address>
+    ETHEREUM_COLD_KEY=<your-cold-key>
+    ETHEREUM_SIGN_KEY=<your-sign-key>
+   ```  
+10. Replace 127.0.0.1 to your booker server IP:
+   - ethereum_gateway/.env
+   ```bash
+    BOOKER_PROVIDER=ws://127.0.0.1:8080/ws-rpc
+   ```  
+11. Fill inventory file with your server IPs or DNS names.
    - inventory_dev (example)
    ```bash
    [db_hosts]
    128.197.40.38
    ```
-6. (Optional) Change port for Redis in:
+12. (Optional) Change port for Redis in:
    - redis.yml
    ```bash
    redis_db_port: 6379
@@ -127,7 +171,7 @@ Edit defaults:
    ```bash
    MEMORY_DB_PORT: "6379"
    ```
-7. (Optional) Change configs (database server IP, username, password and database name) for PosgreSQL in:
+13. (Optional) Change configs (database server IP, username, password and database name) for PosgreSQL in:
    > *Custom PostgreSQL port not supported*
    - db.yml
    ```bash
@@ -160,7 +204,7 @@ Edit defaults:
    DB_PASSWORD: payment-gateway"
    DB_DATABASE: "payment-gateway"
    ```
-8. (Optional) Change configs for booker in:
+14. (Optional) Change configs for booker in:
    - booker.yml
    ```bash
    HTTP_PORT: "8080"
@@ -171,7 +215,7 @@ Edit defaults:
    HTTP_PORT=8080
    HTTP_PORT_HOST=8080
    ```
-9. (Optional) Change configs for bitshares gateway in:
+15. (Optional) Change configs for bitshares gateway in:
    - bitshares_gateway.yml
    ```bash
     HTTP_HOST: "0.0.0.0"
@@ -189,20 +233,23 @@ Edit defaults:
    
    BOOKER_PORT=8080
    ```
-10. (Optional) Change configs for ethereum gateway in:
+16. (Optional) Change configs for ethereum gateway in:
    - ethereum_gateway.yml
    ```bash
+   HOST_PORT: 8089
    PORT: 8089
    ```
-   - ethereum_gateway/docker-compose.yaml
+   - ethereum_gateway/.env
    ```bash
-    ports:
-      - "0.0.0.0:8089:8089"
+   HOST_PORT=8089
+   PORT=8089
+   
+   MEMORY_DB_PORT=6379
    ```
 
 ---
 
-## Prepare databse server
+## Prepare database server
 
 Edit `/etc/default/ufw` and add this line at end of file
 ```bash
@@ -277,7 +324,10 @@ To                         Action      From
 
 Install common software on all hosts:
 ```bash
-ansible-playbook common.yml --extra-vars "target=all" -i inventory_dev
+# ansible-playbook common.yml --extra-vars "target=all" -i inventory_dev
+
+PLAY RECAP **********************************************************************************
+<server-ip>              : ok=9    changed=0    unreachable=0    failed=0
 ```
 
 On database server edit `/etc/default/docker` and add at end of file
@@ -294,12 +344,19 @@ DOCKER_OPTS="--iptables=false"
 
 Install postgresql on database server:
 ```bash
-ansible-playbook db.yml -i inventory_dev
+# ansible-playbook db.yml -i inventory_dev
+
+PLAY RECAP **********************************************************************************
+<server-ip>              : ok=13   changed=1    unreachable=0    failed=0
+
 ```
 
 Install redis on database server:
 ```bash
-ansible-playbook redis.yml -i inventory_dev
+# ansible-playbook redis.yml -i inventory_dev
+
+PLAY RECAP **********************************************************************************
+<server-ip>              : ok=3    changed=1    unreachable=0    failed=0
 ```
 
 Aftes deploy on database server you see this:
@@ -312,55 +369,28 @@ CONTAINER ID        IMAGE                  COMMAND                  CREATED     
 
 ### Deploy services
 
-#### Install booker on service server
+#### Install bitshares gateway on service server
 ```bash
-ansible-playbook booker.yml -i inventory_dev
+# ansible-playbook bitshares_gateway.yml -i inventory_dev
+
+PLAY RECAP ********************************************************************************************************************************************************************************************************
+<server-ip>              : ok=5    changed=5    unreachable=0    failed=0
 ```
-
-#### [Test enviroment] Install bitshares gateway on service server
-```bash
-ansible-playbook bitshares_gateway.yml -i inventory_dev
-```
-
-#### [Production enviroment] Install bitshares gateway on service server
-```bash
-ansible-playbook bitshares_gateway_prod.yml -i inventory_dev
-```
-
-[Production enviroment] Next, connect to service server via ssh. 
-```bash
-# cd /opt/bitshares-gateway
-# docker-compose run gateway
-ACCOUNT is new account. Let's add and encrypt keys
-Please Enter ACCOUNT active private key
-```
-[Production enviroment] Enter your active key and press ENTER
-
-```bash
-ACCOUNT is new account. Let's add and encrypt keys
-Please Enter ACCOUNT memo private key
-```
-[Production enviroment] Enter your memokey and press ENTER
-
-```bash
-Now enter password to encrypt keys
-```
-[Production enviroment] Enter your password twice.
-
-> No limit on characters in the password.
-> No way to recover a forgotten password.
-
-[Production enviroment] If container restarted you need to run it with command:
-```bash
-# docker run gateway
-Account ACCOUNT found. Enter password to decrypt keys
-```
-[Production enviroment] Type your password and press Enter.
-
 
 #### Install ethereum gateway on service server
 ```bash
-ansible-playbook ethereum_gateway.yml -i inventory_dev
+# ansible-playbook ethereum_gateway.yml -i inventory_dev
+
+PLAY RECAP ********************************************************************************************************************************************************************************************************
+<server-ip>              : ok=4    changed=4    unreachable=0    failed=0
+```
+
+#### Install booker on service server
+```bash
+# ansible-playbook booker.yml -i inventory_dev
+
+PLAY RECAP ********************************************************************************************************************************************************************************************************
+<server-ip>              : ok=7    changed=3    unreachable=0    failed=0
 ```
 
 
@@ -368,7 +398,127 @@ Aftes all deploys on service server you see this:
 ```bash
 # docker ps
 CONTAINER ID        IMAGE                       COMMAND                  CREATED             STATUS              PORTS                                            NAMES
-900f8c900353        ethereum_gateway_app        "docker-entrypoint.s…"   33 minutes ago      Up 33 minutes       0.0.0.0:8089->8089/tcp                           ethereum_gateway_app_1
-a54a3159939b        bitshares_gateway_gateway   "bash -c 'pipenv run…"   23 hours ago        Up 2 hours          0.0.0.0:7082->7082/tcp, 0.0.0.0:8889->8889/tcp   gateway
-883c5240898b        booker_booker               "bash -c 'pipenv run…"   25 hours ago        Up 2 hours          0.0.0.0:8080->8080/tcp                           booker
+900f8c900353        ethereum_gateway_app        "docker-entrypoint.s…"   23 minutes ago      Up 33 minutes       0.0.0.0:8089->8089/tcp                           ethereum_gateway_app_1
+a54a3159939b        bitshares_gateway_gateway   "bash -c 'pipenv run…"   23 minutes ago      Up 2 hours          0.0.0.0:8889->8889/tcp                           gateway
+883c5240898b        booker_booker               "bash -c 'pipenv run…"   20 minutes ago      Up 2 hours          0.0.0.0:8080->8080/tcp                           booker
 ````
+
+## Check logs
+
+Check booker logs
+```bash
+# docker logs booker
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+2020-10-01 13:14:44,207|BookerApp|INFO|Database connected to <database-server-ip>:5432
+2020-10-01 13:14:44,211|BookerApp|INFO|Booker server started on 0.0.0.0:8080
+2020-10-01 13:14:44,211|BookerApp|INFO|Setup USDT gateways clients connections...
+2020-10-01 13:14:44,211|BookerApp|INFO|nativeUSDT client created and ready to connect ws://<ethereum-gateway-server-ip>:8089/ws-rpc
+2020-10-01 13:16:54,780|BookerApp|INFO|targetUSDT client created and ready to connect ws://<bitshares-gateway-server-ip>:8889/ws-rpc
+2020-10-01 13:16:54,780|OrderProcessing|INFO|Start to process orders...
+```
+
+Check bitshares gateway logs
+```bash
+# docker logs gateway
+Loading .env environment variables…
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+Loading .env environment variables…
+2020-10-01 15:16:35,905|Config build|INFO|Successfully loaded user's .env configuration
+2020-10-01 15:16:35,912|Config build|INFO|Using unencrypted keys from gateway.yml file
+2020-10-01 15:16:35,912|Config build|INFO|Successfully loaded user's gateway.yml configuration
+/root/.local/share/virtualenvs/app-4PlAip0Q/lib/python3.8/site-packages/graphenecommon/chain.py:115: RuntimeWarning: coroutine 'dict.__new__' was never awaited
+  self.account_class(account)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+2020-10-01 15:16:36,774|Gateway|INFO|Account localtest-finteh-gateway-usdt-wallet is new. Let's retrieve data from blockchain and record it in database!
+2020-10-01 15:16:36,842|Gateway|INFO|Retrieve account localtest-finteh-gateway-usdt-wallet data from database
+2020-10-01 15:16:36,847|Gateway|INFO|Start from operation 43602191, block number 40385877
+2020-10-01 15:16:36,858|Gateway|INFO|BookerClient ready to connect  ws://<your-booker-server-ip>:8080/
+2020-10-01 15:16:36,861|Gateway|INFO|Started websockets rpc server on ws://0.0.0.0:8889/ws-rpc
+2020-10-01 15:16:36,863|Gateway|INFO|
+     Run LOCALFINTEH USDT BitShares gateway
+     Distribution account: localtest-finteh-gateway-usdt-wallet
+     Connected to BitShares API node: wss://testnet.dex.trading/
+     Connected to database: True
+
+2020-10-01 15:16:36,864|Gateway|INFO|Watching localtest-finteh-gateway-usdt-wallet for new operations started
+2020-10-01 15:16:36,867|Gateway|INFO|Watching unconfirmed operations
+2020-10-01 15:16:36,868|Gateway|INFO|Parsing blocks...
+```
+
+Check ethereum gateway logs
+```bash
+# docker logs ethereum_gateway_app_1
+
+> @ migrate /app
+> sequelize db:migrate
+
+
+Sequelize CLI [Node: 14.11.0, CLI: 6.2.0, ORM: 6.3.5]
+
+Loaded configuration file "dist/config/config.db.js".
+Using environment "development".
+== 20191130072647-create-wallets-derived-wallets-and-transactions: migrating =======
+(sequelize) Warning: PostgresSQL does not support 'INTEGER' with LENGTH, UNSIGNED or ZEROFILL. Plain 'INTEGER' will be used instead.
+>> Check: http://www.postgresql.org/docs/9.4/static/datatype.html
+== 20191130072647-create-wallets-derived-wallets-and-transactions: migrated (3.118s)
+
+
+> @ serve /app
+> node dist/index.js
+
+(sequelize) Warning: PostgresSQL does not support 'INTEGER' with LENGTH, UNSIGNED or ZEROFILL. Plain 'INTEGER' will be used instead.
+>> Check: http://www.postgresql.org/docs/9.4/static/datatype.html
+Connection to Redis has been established successfully.
+Connection to Redis has been established successfully.
+[WARN] Redis server does not require a password, but a password was supplied.
+[WARN] Redis server does not require a password, but a password was supplied.
+[WARN] Redis server does not require a password, but a password was supplied.
+Executing (default): SELECT 1+1 AS result
+Connection to database has been established successfully.
+```
+
+
+---
+
+## Experemential features
+
+#### More securely installation of bitshares gateway 
+```bash
+# ansible-playbook bitshares_gateway_prod.yml -i inventory_dev
+
+PLAY RECAP ********************************************************************************************************************************************************************************************************
+<server-ip>              : ok=5    changed=5    unreachable=0    failed=0
+```
+
+Next, connect to service server via ssh. 
+```bash
+# cd /opt/bitshares-gateway
+# docker-compose run gateway
+ACCOUNT is new account. Let's add and encrypt keys
+Please Enter ACCOUNT active private key
+```
+Enter your active key and press ENTER
+
+```bash
+ACCOUNT is new account. Let's add and encrypt keys
+Please Enter ACCOUNT memo private key
+```
+Enter your memokey and press ENTER
+
+```bash
+Now enter password to encrypt keys
+```
+Enter your password twice.
+
+> No limit on characters in the password.
+> No way to recover a forgotten password.
+
+If container restarted you need to run it with command:
+```bash
+# docker run gateway
+Account ACCOUNT found. Enter password to decrypt keys
+```
+Type your password and press Enter.
+

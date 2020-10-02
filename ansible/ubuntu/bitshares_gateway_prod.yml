@@ -18,6 +18,12 @@
       accept_hostkey: yes
       force: yes
       version: master
+      track_submodules: yes
+
+  - name: Copy docker-compose.yml for bitshares_gateway folder
+    copy:
+      src: bitshares_gateway/docker-compose.yml
+      dest: /opt/bitshares_gateway/
 
   - name: Copy .env for bitshares gateway
     copy:

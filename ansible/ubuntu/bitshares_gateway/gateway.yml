@@ -2,13 +2,17 @@
 core_asset: TEST
 
 # Gateway prefix is a main gateway asset. It must be created in bitshares first.
-gateway_prefix: FINTEH
+gateway_prefix: <your-prefix>
 
 #Asset for distribution
-gateway_distribute_asset: FINTEH.ETH
+gateway_distribute_asset: USDT
 
 # Account for distribution (NOT asset owner! Just Gateway Wallet (funded by Governance wallet))
-account: finteh
+account: <your-account>
+
+keys:
+  active: <your-active-key>
+  memo: <your-memo-key>
 
 min_deposit: 0.1
 min_withdrawal: 0.1
@@ -17,11 +21,4 @@ max_withdrawal: 10
 
 # Some bitshares nodes list. Highly recommend to use your own API node
 nodes:
-- "wss://btsws.roelandp.nl/ws"
-
-# Native gateway is an mirror-gateway to another blockchain. For example, if you deploy GATEWAY.ETH target chain,
-# Native gateway is Ethereum gateway.
-native:
-    host: 127.0.0.1
-    http_port: 8089
-    zmq_port: 9090
+- "wss://testnet.dex.trading/"

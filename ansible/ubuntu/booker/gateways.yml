@@ -1,7 +1,8 @@
 USDT:
   # address of NATIVE (Ethereum ERC20 USDT Gateway)
   native:
-    False # Not runned/implemented
+    - 127.0.0.1 # host
+    - 8089   # port
 
   # address of TARGET (BitShares FINTEH.USDT Gateway)
   target:
