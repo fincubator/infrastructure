@@ -153,100 +153,100 @@ Edit defaults:
     ETHEREUM_SIGN_KEY=<your-sign-key>
    ```  
 10. Replace 127.0.0.1 to your booker server IP:
-   - ethereum_gateway/.env
-   ```bash
-    BOOKER_PROVIDER=ws://127.0.0.1:8080/ws-rpc
-   ```  
+    - ethereum_gateway/.env
+    ```bash
+     BOOKER_PROVIDER=ws://127.0.0.1:8080/ws-rpc
+    ```  
 11. Fill inventory file with your server IPs or DNS names.
-   - inventory_dev (example)
-   ```bash
-   [db_hosts]
-   128.197.40.38
-   ```
+    - inventory_dev (example)
+    ```bash
+    [db_hosts]
+    128.197.40.38
+    ```
 12. (Optional) Change port for Redis in:
-   - redis.yml
-   ```bash
-   redis_db_port: 6379
-   ```
-   - ethereum_gateway.yml
-   ```bash
-   MEMORY_DB_PORT: "6379"
-   ```
+    - redis.yml
+    ```bash
+    redis_db_port: 6379
+    ```
+    - ethereum_gateway.yml
+    ```bash
+    MEMORY_DB_PORT: "6379"
+    ```
 13. (Optional) Change configs (database server IP, username, password and database name) for PosgreSQL in:
-   > *Custom PostgreSQL port not supported*
-   - db.yml
-   ```bash
-   postgres_db_port: 5432
-   ```
-   - booker/.env 
-   ```bash 
-   DB_PORT=5432
-   DB_USER=booker
-   DB_PASSWORD=booker
-   DB_DATABASE=booker
-   ```
-   - bitshares_gateway/.env
-   ```bash
-   DATABASE_PORT=5432
-   DATABASE_USERNAME=bitshares-gateway
-   DATABASE_PASSWORD=bitshares-gateway
-   DATABASE_NAME=bitshares-gateway
-   ```
-   - bitshares_gateway.yml
-   ```bash
-    DATABASE_PORT: 5432
-    DATABASE_USERNAME: "bitshares-gateway"
-    DATABASE_PASSWORD: "bitshares-gateway"
-    DATABASE_NAME: "bitshares-gateway"
-   ```
-   - ethereum_gateway.yml 
-   ```bash 
-   DB_USERNAME: "payment-gateway"
-   DB_PASSWORD: payment-gateway"
-   DB_DATABASE: "payment-gateway"
-   ```
+    > *Custom PostgreSQL port not supported*
+    - db.yml
+    ```bash
+    postgres_db_port: 5432
+    ```
+    - booker/.env 
+    ```bash 
+    DB_PORT=5432
+    DB_USER=booker
+    DB_PASSWORD=booker
+    DB_DATABASE=booker
+    ```
+    - bitshares_gateway/.env
+    ```bash
+    DATABASE_PORT=5432
+    DATABASE_USERNAME=bitshares-gateway
+    DATABASE_PASSWORD=bitshares-gateway
+    DATABASE_NAME=bitshares-gateway
+    ```
+    - bitshares_gateway.yml
+    ```bash
+     DATABASE_PORT: 5432
+     DATABASE_USERNAME: "bitshares-gateway"
+     DATABASE_PASSWORD: "bitshares-gateway"
+     DATABASE_NAME: "bitshares-gateway"
+    ```
+    - ethereum_gateway.yml 
+    ```bash 
+    DB_USERNAME: "payment-gateway"
+    DB_PASSWORD: payment-gateway"
+    DB_DATABASE: "payment-gateway"
+    ```
 14. (Optional) Change configs for booker in:
-   - booker.yml
-   ```bash
-   HTTP_PORT: "8080"
-   HTTP_PORT_HOST: "8080"
-   ```
-   - booker/.env
-   ```bash
-   HTTP_PORT=8080
-   HTTP_PORT_HOST=8080
-   ```
+    - booker.yml
+    ```bash
+    HTTP_PORT: "8080"
+    HTTP_PORT_HOST: "8080"
+    ```
+    - booker/.env
+    ```bash
+    HTTP_PORT=8080
+    HTTP_PORT_HOST=8080
+    ```
 15. (Optional) Change configs for bitshares gateway in:
-   - bitshares_gateway.yml
-   ```bash
-    HTTP_HOST: "0.0.0.0"
-    HTTP_PORT: 8889
-    WS_HOST: "0.0.0.0"
-    WS_PORT: 7082
-   ```
-   - bitshares_gateway/.env
-   ```bash
-   HTTP_HOST=0.0.0.0
-   HTTP_PORT=8889
-
-   WS_HOST=0.0.0.0
-   WS_PORT=7082
-   
-   BOOKER_PORT=8080
-   ```
+    - bitshares_gateway.yml
+    ```bash
+     HTTP_HOST: "0.0.0.0"
+     HTTP_PORT: 8889
+     WS_HOST: "0.0.0.0"
+     WS_PORT: 7082
+    ```
+    - bitshares_gateway/.env
+    ```bash
+    HTTP_HOST=0.0.0.0
+    HTTP_PORT=8889 
+    
+    WS_HOST=0.0.0.0
+    WS_PORT=7082
+    
+    BOOKER_PORT=8080
+    ```
 16. (Optional) Change configs for ethereum gateway in:
-   - ethereum_gateway.yml
-   ```bash
-   HOST_PORT: 8089
-   PORT: 8089
-   ```
-   - ethereum_gateway/.env
-   ```bash
-   HOST_PORT=8089
-   PORT=8089
-   
-   MEMORY_DB_PORT=6379
-   ```
+    - ethereum_gateway.yml
+    ```bash
+    HOST_PORT: 8089
+    PORT: 8089
+    ```
+    - ethereum_gateway/.env
+    ```bash
+    HOST_PORT=8089
+    PORT=8089
+     
+    MEMORY_DB_PORT=6379
+    ``` 
 
 ---
 
