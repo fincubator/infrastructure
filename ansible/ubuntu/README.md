@@ -110,7 +110,7 @@ Edit defaults:
 		- 127.0.0.1 # host
    ```   
 4. Replace <your-prefix> with your exchange prefix:
-> EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
+   > EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
    - booker/.env
    ```bash
    EXCHANGE_PREFIX=<your-prefix>
@@ -121,6 +121,7 @@ Edit defaults:
    BOOKER_HOST=127.0.0.1
    ```
 6. Replace <your-prefix> with your exchange prefix:
+   > EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
    - bitshares_gateway/gateway.yml
    ```bash
    gateway_prefix: <your-prefix>
@@ -135,7 +136,7 @@ Edit defaults:
 	  memo: <your-memo-key>
    ```
 8. Replace <your-prefix> with your exchange prefix:
-> EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
+   > EXCHANGE_PREFIX and gateway_prefix must match in booker and all gateways
    - ethereum_gateway.yml
    ```bash
 	EXCHANGE_PREFIX: "<your-prefix>"
