@@ -331,35 +331,49 @@ PLAY RECAP *********************************************************************
 <server-ip>              : ok=9    changed=0    unreachable=0    failed=0
 ```
 
-On database server edit `/etc/default/docker` and add at end of file
-```bash
-DOCKER_OPTS="--iptables=false"
-```
+On database server and service server complete this steps:
+1. Еdit `/etc/default/docker` and add at end of file
+   ```bash
+   DOCKER_OPTS="--iptables=false"
+   ```
+   
+2. Edit `/etc/docker/daemon.json` and add at end of file
+   > This file may be missing. In this case, you need to create it.
+   ```bash
+   { "iptables" : false }
+   ```
 
-On database server edit `/etc/docker/daemon.json` and add at end of file
-> This file may be missing. In this case, you need to create it.
-```bash
-{ "iptables" : false }
-```
-Restart docker service
-```bash
-systemctl restart docker
-```
+3. Restart docker service
+   ```bash
+   systemctl restart docker
+   ```
 
-On service server edit `/etc/default/docker` and add at end of file
-```bash
-DOCKER_OPTS="--iptables=false"
-```
+4. Enable private subnets masquerade
+   ```bash
+   iptables -t nat -A POSTROUTING ! -o docker0 -s 172.16.0.0/12 -j MASQUERADE
+   ```
 
-On service server edit `/etc/docker/daemon.json` and add at end of file
-> This file may be missing. In this case, you need to create it.
-```bash
-{ "iptables" : false }
-```
-Restart docker service
-```bash
-systemctl restart docker
-```
+4. Edit `/etc/default/ufw`. Replace line
+   ```bash
+   DEFAULT_FORWARD_POLICY="DROP"
+   ```
+   to
+   ```bash
+   DEFAULT_FORWARD_POLICY="ACCEPT"
+   ```
+
+5. Edit `/etc/ufw/before.rules` and add this lines before `*filter` line
+   ```bash
+   # NAT table rules
+   *nat
+   :POSTROUTING ACCEPT [0:0]
+   -A POSTROUTING -s 172.16.0.0/12 ! -o docker0 -j MASQUERADE
+   COMMIT
+   ```
+6. Restart UFW
+   ```bash
+   ufw reload
+   ```
 
 ### Deploy databases
 
