@@ -336,9 +336,29 @@ On database server edit `/etc/default/docker` and add at end of file
 DOCKER_OPTS="--iptables=false"
 ```
 
+On database server edit `/etc/docker/daemon.json` and add at end of file
+> This file may be missing. In this case, you need to create it.
+```bash
+{ "iptables" : false }
+```
+Restart docker service
+```bash
+systemctl restart docker
+```
+
 On service server edit `/etc/default/docker` and add at end of file
 ```bash
 DOCKER_OPTS="--iptables=false"
+```
+
+On service server edit `/etc/docker/daemon.json` and add at end of file
+> This file may be missing. In this case, you need to create it.
+```bash
+{ "iptables" : false }
+```
+Restart docker service
+```bash
+systemctl restart docker
 ```
 
 ### Deploy databases
