@@ -16,7 +16,7 @@ Deploy gateway and booker services.
 
 ## Prepare management server
 
-Install Ansible
+Install necessary components
 ```bash
 apt update
 apt -y install python
@@ -26,6 +26,8 @@ apt -y install python3-docker python3-psycopg2 python3-pip
 apt -y install git
 apt -y install ansible
 ```
+> Note: docker and docker-compose will be installed later via ansible playbook
+
 
 Check that all installed:
 ```bash
@@ -201,7 +203,7 @@ Edit defaults:
     - ethereum_gateway.yml 
     ```bash 
     DB_USERNAME: "payment-gateway"
-    DB_PASSWORD: payment-gateway"
+    DB_PASSWORD: "payment-gateway"
     DB_DATABASE: "payment-gateway"
     ```
 14. (Optional) Change configs for booker in:
