@@ -98,6 +98,11 @@ Edit defaults:
    DB_HOST: "127.0.0.1"
    MEMORY_DB_HOST: "127.0.0.1"
    ```
+   - ethereum_gateway/.env
+   ```bash 
+   DB_HOST=127.0.0.1
+   MEMORY_DB_HOST=127.0.0.1
+   ```
 2. Replace 127.0.0.1 to your bitshares gateway server IP:
    - booker/gateways.yml
    ```bash
