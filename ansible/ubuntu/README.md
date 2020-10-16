@@ -55,6 +55,14 @@ Copy key for service server (repeat for each service server):
 ssh-copy-id -i ~/.ssh/id_rsa user@host
 ```
 
+View ssh public key
+```bash
+# cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDrcV+LOapVMqw5lrMge+qmxDq1rPFqLmkKIntl0i3yzou7gU8Bp5CIQWRxLeBo+3oq9Bat2RtiVV/qB7WcqT147jSuiTMzpvV3YmcpoEa/8xBFxAYwFwo8xLCwsPqtK0jJpT+J86uModLgnOCw8srV9wHYveG3QZW+AGpnDh0UlHDc+5lJhhnqBvzupeHBWt6J6ASRfNoARijhGIDT425E3gj0bIcygQV0r05Qcp3slNfeYup/TfgapQLL8NfHu1aW6WlOPIWuNBFp+lY6tG2y7hD+Lki7Jq9FJcDqBKEtophQUtFbJuMgqcSLfq/pQ3rTG4fk8khhOuIl22W1KrEcOPvFUVdJhllCVV13KI14ZpSRd/Rp2pfulB1sNllpUeDYBMhdmeLFY1oUW+eqGYtzC7mkQsI9iH1hmlTtaB37hfKX8AvMpPyAJFxeSgK4Kdn5Wj8tDgp3RITBwQznVo3hxsHy5WzHgMQ0P39CbHK8RQdimJaU+gOHB4UE5s2UWTbpA/3w2HRPrB/BTcvhw4hw1EGwYOnOUqV1/NIFAOn2KLQmeHcy+sMFHLzYWbOEt6S2bxCydWPharwdB0/gcugqaK2XYi4hNewFZMCOkmkQeBhr65TgPzU7pqaGTXdH/UHRORMTlJeoYqyz5dIL0BoBDHFZ+oCN5RsXK71TpDLA/w== root@server
+```
+Add it to `~/.ssh/authorized_keys`
+
+
 Clone fincubator infrastructure repo:
 ```bash
 cd /opt/
