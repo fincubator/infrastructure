@@ -157,6 +157,8 @@ Edit defaults:
     ETHEREUM_USDT_ADDRESS=<your-asset-address>
     ETHEREUM_COLD_KEY=<your-cold-key>
     ETHEREUM_SIGN_KEY=<your-sign-key>
+	
+	WEB3_PROVIDER=<url>
    ```  
 10. Replace 127.0.0.1 to your booker server IP:
     - ethereum_gateway/.env
